@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { FiHome, FiUsers, FiFileText, FiPieChart, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUsers, FiFileText, FiPieChart, FiSettings, FiLogOut, FiLoader } from 'react-icons/fi';
 import { useAuth } from '../../components/AuthContext';
 import Header from '../../components/Header';
 
 const Home = () => {
-    const { logout } = useAuth()
+    const { logout, loading } = useAuth()
     const [activeTab, setActiveTab] = useState('dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -165,8 +165,13 @@ const Home = () => {
 
                 <div className="absolute bottom-0 w-full p-4  border-emerald-700">
                     <button onClick={logout} className="flex items-center space-x-2 p-2 rounded-md text-emerald-100">
-                        <FiLogOut size={20} />
-                        {sidebarOpen && <span>Logout</span>}
+                        {
+                            loading
+                                ? <FiLoader />
+                                : <> <FiLogOut size={20} />
+                                    {sidebarOpen && <span>Logout</span>}</>
+                        }
+
                     </button>
                 </div>
             </div>

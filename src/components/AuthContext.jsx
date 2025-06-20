@@ -9,6 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false)
     const [isAuthenticated, setIsAuthenticated] = useState(
         localStorage.getItem('isAuthenticated') === 'true'
     );
@@ -24,15 +25,18 @@ export const AuthProvider = ({ children }) => {
 
     const login = useCallback(async () => {
         try {
+            setLoading(true)
             const response = await api({
                 method: 'post', url: "/login", withCredentials: true, data: { email: "omdevsinh@krishaweb.com", password: "11111111" }
             })
             localStorage.setItem('isAuthenticated', 'true');
+            setLoading(false)
             localStorage.setItem('user', JSON.stringify(response.data?.data));
             toast.success(response?.data?.message)
             setIsAuthenticated(true);
         } catch (error) {
             toast.error(error?.message)
+            setLoading(false)
             console.log('Login failed:', error);
             return false;
         }
@@ -44,6 +48,8 @@ export const AuthProvider = ({ children }) => {
         isLoggingOutRef.current = true;
 
         try {
+            setLoading(true)
+
             clearAuthState();
             await api({
                 url: "/logout",
@@ -52,8 +58,12 @@ export const AuthProvider = ({ children }) => {
             });
             console.log('Logout API called successfully');
         } catch (err) {
+            setLoading(false)
+
             console.log('Logout API error:', err);
         } finally {
+            setLoading(false)
+
             isLoggingOutRef.current = false;
         }
     }, [clearAuthState]);
@@ -83,7 +93,7 @@ export const AuthProvider = ({ children }) => {
     }, [isAuthenticated, clearAuthState]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
