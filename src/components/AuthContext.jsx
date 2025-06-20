@@ -31,13 +31,6 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(response.data?.data));
             toast.success(response?.data?.message)
             setIsAuthenticated(true);
-            const role = response.data?.data?.role;
-            if (role !== 'admin') {
-                window.location.href = 'https://marketing-platform-sigma.vercel.app/';
-            } else {
-                window.location.href = '/';
-            }
-            return true;
         } catch (error) {
             toast.error(error?.message)
             console.log('Login failed:', error);
